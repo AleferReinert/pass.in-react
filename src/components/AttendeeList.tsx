@@ -2,8 +2,7 @@ import { Checkbox } from './Checkbox'
 import { IconButton } from './IconButton'
 import { Table } from './Table'
 import { TableHeader } from './TableHeader'
-import { attendess } from '../data/attendees'
-import { useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import ChevronLeftIcon from '../assets/chevron-left-icon.svg'
 import ChevronRightIcon from '../assets/chevron-right-icon.svg'
 import ChevronDoubleLeftIcon from '../assets/chevron-double-left-icon.svg'
@@ -13,19 +12,75 @@ import ThreeDotsIcon from '../assets/three-dots-icon.svg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
-
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
-export function AttendeeList() {
-    const [page, setPage] = useState(1)
-    const itemsPerPage = 10
-    const totalPages = Math.ceil(attendess.length / itemsPerPage)
+interface Attendee {
+    id: number
+    name: string
+    email: string
+    createdAt: string
+    checkedInAt: string | null
+}
 
-    function firstPage() {setPage(1)}
-    function prevPage() {setPage(page - 1)}
-    function nextPage() {setPage(page + 1)}
-    function lastPage() {setPage(totalPages)}
+export function AttendeeList() {
+    const [search, setSearch] = useState(() => {
+        const url = new URL(window.location.toString())
+
+        if(url.searchParams.has('search')) {
+            return url.searchParams.get('search') ?? ''
+        }
+        return ''
+    })
+    const [page, setPage] = useState(() => {
+        const url = new URL(window.location.toString())
+        if(url.searchParams.has('page')) {
+            return Number(url.searchParams.get('page'))
+        }
+        return 1
+    })
+    const [attendees, setAttendees] = useState<Attendee[]>([])
+    const [total, setTotal] = useState(0)
+    const totalPages = Math.ceil(total / 10)
+    
+    useEffect(() => {
+        const url = new URL('http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees')
+        url.searchParams.set('pageIndex', String(page - 1))
+        if(search.length > 0) {
+            url.searchParams.set('query', search)
+        }
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            setAttendees(data.attendees)
+            setTotal(data.total)
+        })
+    }, [page, search])
+
+    function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
+        setCurrentSearch(event.target.value)
+        setCurrentPage(1)
+    }
+
+    function setCurrentPage(page: number) {
+        const url = new URL(window.location.toString())
+        url.searchParams.set('page', String(page))
+        window.history.pushState({}, '', url)
+        setPage(page)
+    }
+
+    function setCurrentSearch(search: string) {
+        const url = new URL(window.location.toString())
+        url.searchParams.set('search', search)
+        window.history.pushState({}, '', url)
+        setSearch(search)
+    }
+
+    function firstPage() {setCurrentPage(1)}
+    function prevPage() {setCurrentPage(page - 1)}
+    function nextPage() {setCurrentPage(page + 1)}
+    function lastPage() {setCurrentPage(totalPages)}
 
     return (
         <div className='flex flex-col gap-4'>
@@ -35,8 +90,10 @@ export function AttendeeList() {
                     <img src={MagnifyingGlassIcon} className='size-4' />
                     <input
                         type='text'
+                        value={search}
                         placeholder='Buscar participante...'
                         className='border-0 h-auto p-0 bg-transparent flex-1 outline-none focus:ring-0'
+                        onChange={onSearchInputChange}
                     />
                 </div>
             </div>
@@ -54,7 +111,7 @@ export function AttendeeList() {
                     </tr>
                 </thead>
                 <tbody>
-                    {attendess.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((attendee)=>{
+                    {attendees.map((attendee)=>{
                         return (
                             <tr key={attendee.id} className='border-t border-white/10 hover:bg-white/5 transition-all'>
                                 <td className='py-3 px-5'>
@@ -70,7 +127,13 @@ export function AttendeeList() {
                                     </div>
                                 </td>
                                 <td>{dayjs().to(attendee.createdAt)}</td>
-                                <td>{dayjs().to(attendee.checkedInAt)}</td>
+                                <td>
+                                    {
+                                        attendee.checkedInAt === null
+                                        ? <span className='text-zinc-500'>Não fez check-in</span>
+                                        : dayjs().to(attendee.checkedInAt)
+                                    }
+                                </td>
                                 <td className='text-right px-4'>
                                     <IconButton theme='dark' icon={ThreeDotsIcon} />
                                 </td>
@@ -81,7 +144,7 @@ export function AttendeeList() {
                 <tfoot className='border-t border-white/10'>
                     <tr>
                         <td colSpan={4} className='p-4'>
-                            Mostrando {itemsPerPage} de {attendess.length} ítens
+                            Mostrando {attendees.length} de {total} ítens
                         </td>
                         <td colSpan={2} className='text-right'>
                             <div className='p-4 inline-flex gap-8 items-center'>
