@@ -54,7 +54,7 @@ export function AttendeeList() {
         .then(response => response.json())
         .then(data => {
             setAttendees(data.attendees)
-            setTotal(data.total)
+            setTotal(data.attendees.length)
         })
     }, [page, search])
 
