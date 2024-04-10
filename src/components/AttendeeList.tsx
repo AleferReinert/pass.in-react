@@ -39,13 +39,14 @@ export function AttendeeList() {
         }
         return 1
     })
-    const [attendees, setAttendees] = useState<Attendee[]>([])
+    const itemsPerPage = 10
+    const visibleItens = document.getElementsByTagName('tr').length - 2
     const [total, setTotal] = useState(0)
-    const totalPages = Math.ceil(total / 10)
+    const totalPages = Math.ceil(total / itemsPerPage)
+    const [attendees, setAttendees] = useState<Attendee[]>([])
     
     useEffect(() => {
         const url = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
-        url.searchParams.set('pageIndex', String(page - 1))
         if(search.length > 0) {
             url.searchParams.set('query', search)
         }
@@ -111,7 +112,7 @@ export function AttendeeList() {
                     </tr>
                 </thead>
                 <tbody>
-                    {attendees.map((attendee)=>{
+                    {attendees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((attendee)=>{
                         return (
                             <tr key={attendee.id} className='border-t border-white/10 hover:bg-white/5 transition-all'>
                                 <td className='py-3 px-5'>
@@ -149,7 +150,7 @@ export function AttendeeList() {
                             ? <td colSpan={6} className='p-4'>Nenhum participante encontrado.</td> 
                             : <>
                                 <td colSpan={4} className='p-4'>
-                                    Mostrando {attendees.length} de {total} ítens
+                                    Mostrando {visibleItens} de {total} ítens
                                 </td>
                                 <td colSpan={2} className='text-right'>
                                     <div className='p-4 inline-flex gap-8 items-center'>
