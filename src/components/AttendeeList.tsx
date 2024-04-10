@@ -141,44 +141,52 @@ export function AttendeeList() {
                         )
                     })}
                 </tbody>
+
                 <tfoot className='border-t border-white/10'>
                     <tr>
-                        <td colSpan={4} className='p-4'>
-                            Mostrando {attendees.length} de {total} ítens
-                        </td>
-                        <td colSpan={2} className='text-right'>
-                            <div className='p-4 inline-flex gap-8 items-center'>
-                                <span>
-                                    Página {page} de {totalPages}
-                                </span>
-                                <nav className='flex gap-1'>
-                                    <IconButton
-                                        title='Primeira página'
-                                        icon={ChevronDoubleLeftIcon}
-                                        onClick={firstPage}
-                                        disabled={page == 1}
-                                    />
-                                    <IconButton 
-                                        title='Página anterior'
-                                        icon={ChevronLeftIcon}
-                                        onClick={prevPage}
-                                        disabled={page == 1}
-                                    />
-                                    <IconButton
-                                        title='Próxima página'
-                                        icon={ChevronRightIcon}
-                                        onClick={nextPage}
-                                        disabled={page == totalPages}
-                                    />
-                                    <IconButton
-                                        title='Última página' 
-                                        icon={ChevronDoubleRightIcon}
-                                        onClick={lastPage}
-                                        disabled={page == totalPages}
-                                    />
-                                </nav>
-                            </div>
-                        </td>
+                        {
+                            attendees.length === 0 
+                            ? <td colSpan={6} className='p-4'>Nenhum participante encontrado.</td> 
+                            : <>
+                                <td colSpan={4} className='p-4'>
+                                    Mostrando {attendees.length} de {total} ítens
+                                </td>
+                                <td colSpan={2} className='text-right'>
+                                    <div className='p-4 inline-flex gap-8 items-center'>
+                                        <span>
+                                            Página {page} de {totalPages}
+                                        </span>
+                                        <nav className='flex gap-1'>
+                                            <IconButton
+                                                title='Primeira página'
+                                                icon={ChevronDoubleLeftIcon}
+                                                onClick={firstPage}
+                                                disabled={page == 1}
+                                                />
+                                            <IconButton 
+                                                title='Página anterior'
+                                                icon={ChevronLeftIcon}
+                                                onClick={prevPage}
+                                                disabled={page == 1}
+                                                />
+                                            <IconButton
+                                                title='Próxima página'
+                                                icon={ChevronRightIcon}
+                                                onClick={nextPage}
+                                                disabled={page == totalPages}
+                                                />
+                                            <IconButton
+                                                title='Última página' 
+                                                icon={ChevronDoubleRightIcon}
+                                                onClick={lastPage}
+                                                disabled={page == totalPages}
+                                                />
+                                        </nav>
+                                    </div>
+                                </td>
+                            </>
+                        }
+                        
                     </tr>
                 </tfoot>
             </Table>
