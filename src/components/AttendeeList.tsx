@@ -44,7 +44,7 @@ export function AttendeeList() {
     const totalPages = Math.ceil(total / 10)
     
     useEffect(() => {
-        const url = new URL('http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees')
+        const url = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
         url.searchParams.set('pageIndex', String(page - 1))
         if(search.length > 0) {
             url.searchParams.set('query', search)

@@ -11,10 +11,7 @@ export function IconButton({theme, icon, ...props}: IconButtonProps){
     const themeDark = commomStyles + 'bg-black/20';
 
     return(
-        <button 
-            {...props} 
-            className={theme === 'dark' ? themeDark : themeLight}
-        >
+        <button {...props} className={theme === 'dark' ? themeDark : themeLight}>
             <img src={icon} className='size-4 m-auto' />
         </button>
     )
