@@ -3,12 +3,12 @@ import { IconButton } from './IconButton'
 import { Table } from './Table'
 import { TableHeader } from './TableHeader'
 import { ChangeEvent, useEffect, useState } from 'react'
-import ChevronLeftIcon from '../assets/chevron-left-icon.svg'
-import ChevronRightIcon from '../assets/chevron-right-icon.svg'
-import ChevronDoubleLeftIcon from '../assets/chevron-double-left-icon.svg'
-import ChevronDoubleRightIcon from '../assets/chevron-double-right-icon.svg'
-import MagnifyingGlassIcon from '../assets/magnifying-glass-icon.svg'
-import ThreeDotsIcon from '../assets/three-dots-icon.svg'
+import ChevronLeftIcon from '/chevron-left-icon.svg'
+import ChevronRightIcon from '/chevron-right-icon.svg'
+import ChevronDoubleLeftIcon from '/chevron-double-left-icon.svg'
+import ChevronDoubleRightIcon from '/chevron-double-right-icon.svg'
+import MagnifyingGlassIcon from '/magnifying-glass-icon.svg'
+import ThreeDotsIcon from '/three-dots-icon.svg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
@@ -40,10 +40,15 @@ export function AttendeeList() {
         return 1
     })
     const itemsPerPage = 10
-    const visibleItens = document.getElementsByTagName('tr').length - 2
-    const [total, setTotal] = useState(0)
-    const totalPages = Math.ceil(total / itemsPerPage)
+    const [totalAttendees, setTotalAttendees] = useState(0)
+    const totalPages = Math.ceil(totalAttendees / itemsPerPage)
     const [attendees, setAttendees] = useState<Attendee[]>([])
+    const visibleItens = () => {
+        const start = (page * itemsPerPage) - (itemsPerPage)
+        const end = page * itemsPerPage > totalAttendees ? totalAttendees : page * itemsPerPage
+
+        return end-start
+    }
     
     useEffect(() => {
         const url = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
@@ -55,7 +60,7 @@ export function AttendeeList() {
         .then(response => response.json())
         .then(data => {
             setAttendees(data.attendees)
-            setTotal(data.attendees.length)
+            setTotalAttendees(data.attendees.length)
         })
     }, [page, search])
 
@@ -150,7 +155,7 @@ export function AttendeeList() {
                             ? <td colSpan={6} className='p-4'>Nenhum participante encontrado.</td> 
                             : <>
                                 <td colSpan={4} className='p-4'>
-                                    Mostrando {visibleItens} de {total} ítens
+                                    Mostrando {visibleItens()} de {totalAttendees} itens
                                 </td>
                                 <td colSpan={2} className='text-right'>
                                     <div className='p-4 inline-flex gap-8 items-center'>

@@ -1,4 +1,4 @@
-import NlwUniteIcon from '../assets/nlw-united-icon.svg'
+import NlwUniteIcon from '/nlw-united-icon.svg'
 
 export function Header() {
     return (
