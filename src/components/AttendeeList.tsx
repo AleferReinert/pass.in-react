@@ -3,15 +3,20 @@ import { IconButton } from './IconButton'
 import { Table } from './Table'
 import { TableHeader } from './TableHeader'
 import { ChangeEvent, useEffect, useState } from 'react'
-import ChevronLeftIcon from '/chevron-left-icon.svg'
-import ChevronRightIcon from '/chevron-right-icon.svg'
-import ChevronDoubleLeftIcon from '/chevron-double-left-icon.svg'
-import ChevronDoubleRightIcon from '/chevron-double-right-icon.svg'
-import MagnifyingGlassIcon from '/magnifying-glass-icon.svg'
-import ThreeDotsIcon from '/three-dots-icon.svg'
+import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
+import { BsThreeDots as ThreeDotsIcon } from 'react-icons/bs'
+import {
+    FiChevronLeft as ChevronLeftIcon,
+    FiChevronRight as ChevronRightIcon,
+    FiChevronsLeft as ChevronsLeftIcon, 
+    FiChevronsRight as ChevronsRightIcon,
+    
+
+} from 'react-icons/fi'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
+import { TableCheckIn } from './TableCheckIn'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
@@ -24,6 +29,8 @@ interface Attendee {
 }
 
 export function AttendeeList() {
+
+    // precisa arrumar, busca está funcionando com cae sensitive somente
     const [search, setSearch] = useState(() => {
         const url = new URL(window.location.toString())
 
@@ -80,7 +87,7 @@ export function AttendeeList() {
         const url = new URL(window.location.toString())
         url.searchParams.set('search', search)
         window.history.pushState({}, '', url)
-        setSearch(search)
+        setSearch(search)   
     }
 
     function firstPage() {setCurrentPage(1)}
@@ -93,7 +100,7 @@ export function AttendeeList() {
             <div className='flex gap-3'>
                 <h1 className='text-2xl font-bold -mt-1'>Participantes</h1>
                 <div className='flex gap-2 pl-3 rounded-lg w-72 border border-white/10 text-sm h-[34px] items-center'>
-                    <img src={MagnifyingGlassIcon} className='size-4' />
+                    <MagnifyingGlassIcon className='size-4 text-emerald-200' />
                     <input
                         type='text'
                         value={search}
@@ -134,14 +141,10 @@ export function AttendeeList() {
                                 </td>
                                 <td>{dayjs().to(attendee.createdAt)}</td>
                                 <td>
-                                    {
-                                        attendee.checkedInAt === null
-                                        ? <span className='text-zinc-500'>Não fez check-in</span>
-                                        : dayjs().to(attendee.checkedInAt)
-                                    }
+                                    <TableCheckIn date={attendee.checkedInAt !== null ? dayjs().to(attendee.checkedInAt) : ''} />
                                 </td>
                                 <td className='text-right px-4'>
-                                    <IconButton theme='dark' icon={ThreeDotsIcon} />
+                                    <IconButton theme='dark' children={<ThreeDotsIcon />} />
                                 </td>
                             </tr>
                         )
@@ -165,25 +168,25 @@ export function AttendeeList() {
                                         <nav className='flex gap-1'>
                                             <IconButton
                                                 title='Primeira página'
-                                                icon={ChevronDoubleLeftIcon}
+                                                children={<ChevronsLeftIcon />}
                                                 onClick={firstPage}
                                                 disabled={page == 1}
                                                 />
                                             <IconButton 
                                                 title='Página anterior'
-                                                icon={ChevronLeftIcon}
+                                                children={<ChevronLeftIcon />}
                                                 onClick={prevPage}
                                                 disabled={page == 1}
                                                 />
                                             <IconButton
                                                 title='Próxima página'
-                                                icon={ChevronRightIcon}
+                                                children={<ChevronRightIcon />}
                                                 onClick={nextPage}
                                                 disabled={page == totalPages}
                                                 />
                                             <IconButton
                                                 title='Última página' 
-                                                icon={ChevronDoubleRightIcon}
+                                                children={<ChevronsRightIcon />}
                                                 onClick={lastPage}
                                                 disabled={page == totalPages}
                                                 />
