@@ -5,22 +5,15 @@ import { TableHeader } from './TableHeader'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
 import { BsThreeDots as ThreeDotsIcon } from 'react-icons/bs'
-import {
-    FiChevronLeft as ChevronLeftIcon,
-    FiChevronRight as ChevronRightIcon,
-    FiChevronsLeft as ChevronsLeftIcon, 
-    FiChevronsRight as ChevronsRightIcon,
-    
-
-} from 'react-icons/fi'
+import { TableCheckIn } from './TableCheckIn'
+import { TableFooter } from './TableFooter'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
-import { TableCheckIn } from './TableCheckIn'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
-interface Attendee {
+type Attendee = {
     id: number
     name: string
     email: string
@@ -29,71 +22,66 @@ interface Attendee {
 }
 
 export function AttendeeList() {
-
-    // precisa arrumar, busca está funcionando com cae sensitive somente
+    const url = new URL(window.location.toString())
+    const pageParamInURL = Number(url.searchParams.get('page'))
     const [search, setSearch] = useState(() => {
-        const url = new URL(window.location.toString())
-
-        if(url.searchParams.has('search')) {
-            return url.searchParams.get('search') ?? ''
-        }
-        return ''
+        return url.searchParams.has('search') ? url.searchParams.get('search') ?? '' : ''
     })
-    const [page, setPage] = useState(() => {
-        const url = new URL(window.location.toString())
-        if(url.searchParams.has('page')) {
-            return Number(url.searchParams.get('page'))
-        }
-        return 1
-    })
-    const itemsPerPage = 10
-    const [totalAttendees, setTotalAttendees] = useState(0)
-    const totalPages = Math.ceil(totalAttendees / itemsPerPage)
     const [attendees, setAttendees] = useState<Attendee[]>([])
-    const visibleItens = () => {
-        const start = (page * itemsPerPage) - (itemsPerPage)
-        const end = page * itemsPerPage > totalAttendees ? totalAttendees : page * itemsPerPage
-
-        return end-start
-    }
+    const [totalPages, setTotalPages] = useState(1)
+    const [page, setPage] = useState(1)
+    const itemsPerPage = 10
     
     useEffect(() => {
-        const url = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
+        const urlAPI = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
         if(search.length > 0) {
-            url.searchParams.set('query', search)
+            urlAPI.searchParams.set('query', search)
         }
 
-        fetch(url)
+        if(pageParamInURL > 0 && pageParamInURL <= totalPages) {
+            setPage(pageParamInURL)
+        }
+        
+        fetch(urlAPI)
         .then(response => response.json())
         .then(data => {
+            const totalPages = Math.ceil(data.attendees.length / itemsPerPage)
+            
             setAttendees(data.attendees)
-            setTotalAttendees(data.attendees.length)
+            setTotalPages(totalPages)
+            
+            function updateURL(page: number){
+                const url = new URL(window.location.toString())
+                url.searchParams.set('page', String(page))
+                window.history.pushState({}, '', url)
+                setPage(totalPages)
+            }
+            
+            if(pageParamInURL > totalPages) {
+                updateURL(totalPages)
+            } else if(pageParamInURL <= 0) {
+                updateURL(1)
+            }
         })
-    }, [page, search])
+
+    }, [pageParamInURL, search, totalPages])
+    
+    function setCurrentPage(page: number) {
+        url.searchParams.set('page', String(page))
+        window.history.pushState({}, '', url)
+        setPage(page)
+    }
 
     function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
         setCurrentSearch(event.target.value)
         setCurrentPage(1)
     }
 
-    function setCurrentPage(page: number) {
-        const url = new URL(window.location.toString())
-        url.searchParams.set('page', String(page))
-        window.history.pushState({}, '', url)
-        setPage(page)
-    }
-
     function setCurrentSearch(search: string) {
-        const url = new URL(window.location.toString())
         url.searchParams.set('search', search)
         window.history.pushState({}, '', url)
         setSearch(search)   
     }
-
-    function firstPage() {setCurrentPage(1)}
-    function prevPage() {setCurrentPage(page - 1)}
-    function nextPage() {setCurrentPage(page + 1)}
-    function lastPage() {setCurrentPage(totalPages)}
 
     return (
         <div className='flex flex-col gap-4'>
@@ -125,6 +113,9 @@ export function AttendeeList() {
                 </thead>
                 <tbody>
                     {attendees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((attendee)=>{
+                        const createdAt = dayjs().to(attendee.createdAt)
+                        const checkedInAt = attendee.checkedInAt !== null ? dayjs().to(attendee.checkedInAt) : ''
+
                         return (
                             <tr key={attendee.id} className='border-t border-white/10 hover:bg-white/5 transition-all'>
                                 <td className='py-3 px-5'>
@@ -139,65 +130,24 @@ export function AttendeeList() {
                                         {attendee.email}
                                     </div>
                                 </td>
-                                <td>{dayjs().to(attendee.createdAt)}</td>
+                                <td>{createdAt}</td>
                                 <td>
-                                    <TableCheckIn date={attendee.checkedInAt !== null ? dayjs().to(attendee.checkedInAt) : ''} />
+                                    <TableCheckIn date={checkedInAt} />
                                 </td>
-                                <td className='text-right px-4'>
+                                <td className='text-right px-5'>
                                     <IconButton theme='dark' children={<ThreeDotsIcon />} />
                                 </td>
                             </tr>
                         )
                     })}
                 </tbody>
-
-                <tfoot className='border-t border-white/10'>
-                    <tr>
-                        {
-                            attendees.length === 0 
-                            ? <td colSpan={6} className='p-4'>Nenhum participante encontrado.</td> 
-                            : <>
-                                <td colSpan={4} className='p-4'>
-                                    Mostrando {visibleItens()} de {totalAttendees} itens
-                                </td>
-                                <td colSpan={2} className='text-right'>
-                                    <div className='p-4 inline-flex gap-8 items-center'>
-                                        <span>
-                                            Página {page} de {totalPages}
-                                        </span>
-                                        <nav className='flex gap-1'>
-                                            <IconButton
-                                                title='Primeira página'
-                                                children={<ChevronsLeftIcon />}
-                                                onClick={firstPage}
-                                                disabled={page == 1}
-                                                />
-                                            <IconButton 
-                                                title='Página anterior'
-                                                children={<ChevronLeftIcon />}
-                                                onClick={prevPage}
-                                                disabled={page == 1}
-                                                />
-                                            <IconButton
-                                                title='Próxima página'
-                                                children={<ChevronRightIcon />}
-                                                onClick={nextPage}
-                                                disabled={page == totalPages}
-                                                />
-                                            <IconButton
-                                                title='Última página' 
-                                                children={<ChevronsRightIcon />}
-                                                onClick={lastPage}
-                                                disabled={page == totalPages}
-                                                />
-                                        </nav>
-                                    </div>
-                                </td>
-                            </>
-                        }
-                        
-                    </tr>
-                </tfoot>
+                <TableFooter
+                    page={page}
+                    setCurrentPage={setCurrentPage} 
+                    itemsPerPage={itemsPerPage}
+                    totalAttendees={attendees.length}
+                    totalPages={totalPages}
+                />
             </Table>
         </div>
     )
