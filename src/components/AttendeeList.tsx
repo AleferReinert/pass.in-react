@@ -2,7 +2,7 @@ import { Checkbox } from './Checkbox'
 import { IconButton } from './IconButton'
 import { Table } from './Table'
 import { TableHeader } from './TableHeader'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
 import { BsThreeDots as ThreeDotsIcon } from 'react-icons/bs'
 import { TableCheckIn } from './TableCheckIn'
@@ -22,60 +22,46 @@ type Attendee = {
 }
 
 export function AttendeeList() {
-    const url = new URL(window.location.toString())
+    const url = useMemo(() => new URL(window.location.toString()), [])
     const pageParamInURL = Number(url.searchParams.get('page'))
-    const [search, setSearch] = useState(() => {
-        return url.searchParams.has('search') ? url.searchParams.get('search') ?? '' : ''
-    })
+    const searchParamInURL = url.searchParams.get('search') ?? ''
+    const [search, setSearch] = useState(searchParamInURL)
     const [attendees, setAttendees] = useState<Attendee[]>([])
-    const [totalPages, setTotalPages] = useState(1)
     const [page, setPage] = useState(1)
+    const totalPages = useRef(1)
     const itemsPerPage = 10
+    const status = useRef<string | null>('Carregando participantes...')
+    const updateUrlParam = useCallback((param: string, value: string | null) => {
+        if(value) {
+            url.searchParams.set(param, value)
+            param === 'page' ? setPage(Number(value)) : ''
+            param === 'search' ? setSearch(value) : ''
+        } else {
+            url.searchParams.delete(param)
+        }
+
+        window.history.pushState({}, '', url)
+    }, [url])
     
     useEffect(() => {
         const urlAPI = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
-        if(search.length > 0) {
-            urlAPI.searchParams.set('query', search)
-        }
+        search.length > 0 ? urlAPI.searchParams.set('query', search) : ''
 
-        if(pageParamInURL > 0 && pageParamInURL <= totalPages) {
-            setPage(pageParamInURL)
-        }
-        
-        fetch(urlAPI)
-        .then(response => response.json())
-        .then(data => {
-            const totalPages = Math.ceil(data.attendees.length / itemsPerPage)
-            
+        fetch(urlAPI).then(response => response.json()).then(data => {
+            const totalAttendees = data.attendees.length
+            totalPages.current = Math.ceil(totalAttendees / itemsPerPage)
+            status.current = totalAttendees === 0 ? 'Nenhum participante registrado.' : null
+            const validPageParam = pageParamInURL > 0 && pageParamInURL <= totalPages.current
+
             setAttendees(data.attendees)
-            setTotalPages(totalPages)
-            
-            // Redireciona para primeira página caso o parâmetro "page" da URL tenha uma página inexistente
-            if(pageParamInURL > totalPages || pageParamInURL < 0) {
-                const url = new URL(window.location.toString())
-                url.searchParams.set('page', String(1))
-                window.history.pushState({}, '', url)
-                setPage(1)
-            } 
+            validPageParam ? setPage(pageParamInURL) : updateUrlParam('page', null)
         })
-
-    }, [pageParamInURL, search, totalPages])
-    
-    function setCurrentPage(page: number) {
-        url.searchParams.set('page', String(page))
-        window.history.pushState({}, '', url)
-        setPage(page)
-    }
+    }, [pageParamInURL, search, updateUrlParam])
 
     function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
-        setCurrentSearch(event.target.value)
-        setCurrentPage(1)
-    }
-
-    function setCurrentSearch(search: string) {
-        url.searchParams.set('search', search)
-        window.history.pushState({}, '', url)
-        setSearch(search)   
+        updateUrlParam('search', event.target.value)
+        setSearch(event.target.value)
+        updateUrlParam('page', '1')
     }
 
     return (
@@ -138,10 +124,11 @@ export function AttendeeList() {
                 </tbody>
                 <TableFooter
                     page={page}
-                    setCurrentPage={setCurrentPage} 
+                    updateUrlParam={updateUrlParam} 
                     itemsPerPage={itemsPerPage}
                     totalAttendees={attendees.length}
-                    totalPages={totalPages}
+                    totalPages={totalPages.current}
+                    status={status.current}
                 />
             </Table>
         </div>

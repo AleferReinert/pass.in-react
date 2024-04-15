@@ -8,26 +8,28 @@ import {
 
 type TableFooterProps = {
     page: number
-    setCurrentPage: (page: number) => void
+    updateUrlParam: (param: string, value: string | null) => void
     itemsPerPage: number
     totalAttendees: number
     totalPages: number
+    status: string | null
 }
 
-export function TableFooter({ page, setCurrentPage, itemsPerPage, totalAttendees, totalPages }: TableFooterProps) {
+export function TableFooter({ page, updateUrlParam, itemsPerPage, totalAttendees, totalPages, status }: TableFooterProps) {
     const visibleItens = () => {
         const start = (page * itemsPerPage) - (itemsPerPage)
         const end = page * itemsPerPage > totalAttendees ? totalAttendees : page * itemsPerPage
         return end-start
     }
 
+    const goToPage = (page: number) => updateUrlParam('page', (page).toString())
 
     return (
         <tfoot className='border-t border-white/10'>
             <tr>
                 <td colSpan={6} className='p-5'>
                     {
-                        totalAttendees === 0 ? 'Nenhum participante encontrado.' :
+                        status ? status :
 
                         <div className='flex justify-between'>
                             Mostrando {visibleItens()} de {totalAttendees} itens
@@ -40,25 +42,25 @@ export function TableFooter({ page, setCurrentPage, itemsPerPage, totalAttendees
                                     <IconButton
                                         title='Primeira página'
                                         children={<ChevronsLeftIcon />}
-                                        onClick={() => setCurrentPage(1)}
+                                        onClick={() => goToPage(1)}
                                         disabled={page == 1}
                                     />
                                     <IconButton 
                                         title='Página anterior'
                                         children={<ChevronLeftIcon />}
-                                        onClick={() => setCurrentPage(page - 1)}
+                                        onClick={() => goToPage(page - 1)}
                                         disabled={page == 1}
                                     />
                                     <IconButton
                                         title='Próxima página'
                                         children={<ChevronRightIcon />}
-                                        onClick={() => setCurrentPage(page + 1)}
+                                        onClick={() => goToPage(page + 1)}
                                         disabled={page == totalPages}
                                     />
                                     <IconButton
                                         title='Última página' 
                                         children={<ChevronsRightIcon />}
-                                        onClick={() => setCurrentPage(totalPages)}
+                                        onClick={() => goToPage(totalPages)}
                                         disabled={page == totalPages}
                                     />
                                 </nav>
