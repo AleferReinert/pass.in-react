@@ -50,18 +50,13 @@ export function AttendeeList() {
             setAttendees(data.attendees)
             setTotalPages(totalPages)
             
-            function updateURL(page: number){
+            // Redireciona para primeira página caso o parâmetro "page" da URL tenha uma página inexistente
+            if(pageParamInURL > totalPages || pageParamInURL < 0) {
                 const url = new URL(window.location.toString())
-                url.searchParams.set('page', String(page))
+                url.searchParams.set('page', String(1))
                 window.history.pushState({}, '', url)
-                setPage(totalPages)
-            }
-            
-            if(pageParamInURL > totalPages) {
-                updateURL(totalPages)
-            } else if(pageParamInURL <= 0) {
-                updateURL(1)
-            }
+                setPage(1)
+            } 
         })
 
     }, [pageParamInURL, search, totalPages])
