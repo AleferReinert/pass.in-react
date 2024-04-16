@@ -2,72 +2,42 @@ import { Checkbox } from './Checkbox'
 import { IconButton } from './IconButton'
 import { Table } from './Table'
 import { TableHeader } from './TableHeader'
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
 import { BsThreeDots as ThreeDotsIcon } from 'react-icons/bs'
+import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
 import { TableCheckIn } from './TableCheckIn'
-import { TableFooter } from './TableFooter'
+import { TableFooter, TableFooterProps } from './TableFooter'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
+import { EventProps } from '../App'
+import { ChangeEvent } from 'react'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
-type Attendee = {
-    id: number
-    name: string
-    email: string
-    createdAt: string
-    checkedInAt: string | null
+export interface AttendeeListProps extends TableFooterProps {
+    event: EventProps
+    itemsPerPage: number
+    search: string
+    onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export function AttendeeList() {
-    const url = useMemo(() => new URL(window.location.toString()), [])
-    const pageParamInURL = Number(url.searchParams.get('page'))
-    const searchParamInURL = url.searchParams.get('search') ?? ''
-    const [search, setSearch] = useState(searchParamInURL)
-    const [attendees, setAttendees] = useState<Attendee[]>([])
-    const [page, setPage] = useState(1)
-    const totalPages = useRef(1)
-    const itemsPerPage = 10
-    const status = useRef<string | null>('Carregando participantes...')
-    const updateUrlParam = useCallback((param: string, value: string | null) => {
-        if(value) {
-            url.searchParams.set(param, value)
-            param === 'page' ? setPage(Number(value)) : ''
-            param === 'search' ? setSearch(value) : ''
-        } else {
-            url.searchParams.delete(param)
-        }
-
-        window.history.pushState({}, '', url)
-    }, [url])
-    
-    useEffect(() => {
-        const urlAPI = new URL('https://pass-in-nodejs.vercel.app/events/7f968e71-187e-469e-95b1-dc861048194d/attendees')
-        search.length > 0 ? urlAPI.searchParams.set('query', search) : ''
-
-        fetch(urlAPI).then(response => response.json()).then(data => {
-            const totalAttendees = data.attendees.length
-            totalPages.current = Math.ceil(totalAttendees / itemsPerPage)
-            status.current = totalAttendees === 0 ? 'Nenhum participante registrado.' : null
-            const validPageParam = pageParamInURL > 0 && pageParamInURL <= totalPages.current
-
-            setAttendees(data.attendees)
-            validPageParam ? setPage(pageParamInURL) : updateUrlParam('page', null)
-        })
-    }, [pageParamInURL, search, updateUrlParam])
-
-    function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
-        updateUrlParam('search', event.target.value)
-        setSearch(event.target.value)
-        updateUrlParam('page', '1')
-    }
+export function AttendeeList({
+    event,
+    attendees,
+    search,
+    onSearchInputChange,
+    itemsPerPage,
+    page,
+    setPage
+}: AttendeeListProps) {
 
     return (
         <div className='flex flex-col gap-4'>
-            <div className='flex gap-3'>
-                <h1 className='text-2xl font-bold -mt-1'>Participantes</h1>
+            <div className='flex gap-3 flex-col'>
+                <h1 className='text-2xl font-bold -mt-1'>
+                    {event.title}
+                </h1>
+                <h2 className='text-zinc-400'>Lista de participantes.</h2>
                 <div className='flex gap-2 pl-3 rounded-lg w-72 border border-white/10 text-sm h-[34px] items-center'>
                     <MagnifyingGlassIcon className='size-4 text-emerald-200' />
                     <input
@@ -93,7 +63,7 @@ export function AttendeeList() {
                     </tr>
                 </thead>
                 <tbody>
-                    {attendees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((attendee)=>{
+                    {attendees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(attendee =>{
                         const createdAt = dayjs().to(attendee.createdAt)
                         const checkedInAt = attendee.checkedInAt !== null ? dayjs().to(attendee.checkedInAt) : ''
 
@@ -124,11 +94,9 @@ export function AttendeeList() {
                 </tbody>
                 <TableFooter
                     page={page}
-                    updateUrlParam={updateUrlParam} 
+                    setPage={setPage}
                     itemsPerPage={itemsPerPage}
-                    totalAttendees={attendees.length}
-                    totalPages={totalPages.current}
-                    status={status.current}
+                    attendees={attendees}
                 />
             </Table>
         </div>
