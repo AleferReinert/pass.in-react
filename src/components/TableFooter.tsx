@@ -24,8 +24,8 @@ export function TableFooter({ attendees, page, setPage, itemsPerPage }: TableFoo
 
         if(invalidPage) {
             const url = new URL(window.location.toString())
-            // url.searchParams.delete('page')
-            // window.history.pushState({}, '', url)
+            url.searchParams.delete('page')
+            window.history.pushState({}, '', url)
             setPage(1)
         }
     }, [page, pagesAmount, setPage])
