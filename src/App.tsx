@@ -34,6 +34,7 @@ export function App() {
         url.current.searchParams.set('search', event.target.value)
         url.current.searchParams.delete('page')
         window.history.pushState({}, '', url.current)
+        setPage(1)
     }
     
     useEffect(() =>{
