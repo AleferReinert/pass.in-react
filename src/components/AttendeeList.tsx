@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
 import { EventProps } from '../App'
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useState } from 'react'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
@@ -30,6 +30,27 @@ export function AttendeeList({
     page,
     setPage
 }: AttendeeListProps) {
+    const [checkboxControllerState, setCheckboxControllerState] = useState(false)
+
+    function toggleCheckboxes() {
+        const checkboxes = document.querySelectorAll('input[name="attendee"]') as NodeListOf<HTMLInputElement>;
+        let allSelected = true;
+        setCheckboxControllerState(true)
+
+        checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+                allSelected = false;
+                checkbox.checked = true;
+            }
+        });
+
+        if (allSelected) {
+            setCheckboxControllerState(false)
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        }
+    }
 
     return (
         <div className='flex flex-col gap-4'>
@@ -53,7 +74,7 @@ export function AttendeeList({
                 <thead className='text-white'>
                     <tr>
                         <th className='py-3 px-5 leading-none w-0'>
-                            <Checkbox />
+                            <Checkbox checked={checkboxControllerState} onChange={() => toggleCheckboxes()} />
                         </th>
                         <TableHeader>Código</TableHeader>
                         <TableHeader>Participante</TableHeader>
@@ -70,7 +91,7 @@ export function AttendeeList({
                         return (
                             <tr key={attendee.id} className='border-t border-white/10 hover:bg-white/5 transition-all'>
                                 <td className='py-3 px-5'>
-                                    <Checkbox />
+                                    <Checkbox name='attendee' value={attendee.id} />
                                 </td>
                                 <td>{attendee.id}</td>
                                 <td className='py-3 flex flex-col gap-1'>
