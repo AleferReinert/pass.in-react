@@ -42,9 +42,6 @@ export function App() {
         
         if(search.length > 0) {
             urlAttendees.searchParams.set('query', search)
-        } else {
-            url.current.searchParams.delete('search')
-            window.history.pushState({}, '', url.current)
         }
         
         fetch(urlEvent).then(response => response.json()).then(data => {
