@@ -47,7 +47,7 @@ export function TableFooter({ attendees, page, setPage, itemsPerPage }: TableFoo
         <tfoot className='border-t border-white/10'>
             <tr>
                 <td colSpan={6} className='p-5'>
-                    {attendeesAmount === 0 ? 'Nenhum usuário registrado.' :
+                    {attendeesAmount === 0 ? 'Nenhum usuário encontrado.' :
 
                         <div className='flex justify-between'>
                             Mostrando {visibleItems()} de {attendeesAmount} itens

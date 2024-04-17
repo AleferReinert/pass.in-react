@@ -60,7 +60,7 @@ export function AttendeeList({
                 </h1>
                 <h2 className='text-zinc-400'>Lista de participantes.</h2>
                 <div className='flex gap-2 pl-3 rounded-lg w-72 border border-white/10 text-sm h-[34px] items-center'>
-                    <MagnifyingGlassIcon className='size-4 text-emerald-200' />
+                    <MagnifyingGlassIcon className='size-4 text-orange-400' />
                     <input
                         type='text'
                         value={search}
@@ -73,7 +73,7 @@ export function AttendeeList({
             <Table>
                 <thead className='text-white'>
                     <tr>
-                        <th className='py-3 px-5 leading-none w-0'>
+                        <th className='p-5 leading-none w-0'>
                             <Checkbox checked={checkboxControllerState} onChange={() => toggleCheckboxes()} />
                         </th>
                         <TableHeader>Código</TableHeader>
