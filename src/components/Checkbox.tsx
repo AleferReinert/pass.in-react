@@ -12,6 +12,7 @@ export function Checkbox({...props}: CheckboxProps) {
                 hover:cursor-pointer
                 checked:bg-orange-400
                 checked:focus:bg-orange-400
+                checked:hover:bg-orange-400
                 border size-4 bg-black/20 rounded-sm border-white/10
             `}
             />
