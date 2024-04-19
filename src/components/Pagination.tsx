@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Button } from './Button'
 import {
     FiChevronLeft as ChevronLeftIcon,
@@ -17,6 +17,7 @@ export interface PaginationProps {
 }
 
 export function Pagination({ data, page, setPage, itemsPerPage }: PaginationProps) {
+    const message = useRef('...')
     const dataAmount = data?.length ?? -1
     const pagesAmount = Math.ceil(dataAmount / itemsPerPage)
     const visibleItems = () => {
@@ -41,10 +42,16 @@ export function Pagination({ data, page, setPage, itemsPerPage }: PaginationProp
             setPage(1)
         }
     }, [page, pagesAmount, setPage])
+
+    if(dataAmount > 0) {
+        message.current = `Mostrando ${visibleItems()} de ${dataAmount} itens`
+    } else if(dataAmount === 0) {
+        message.current = 'Nenhum participante encontrado.'
+    }
     
     return (
         <div className='flex justify-between items-center'>
-            Mostrando {visibleItems()} de {dataAmount} itens
+            {message.current}
 
             {pagesAmount > 1 ? 
                 <div className='flex gap-8 items-center'>
