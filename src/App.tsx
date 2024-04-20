@@ -13,39 +13,27 @@ dayjs.locale('pt-br')
 
 export function App() {
     const url = useRef(new URL(window.location.toString()))
-    const eventsPageTitle = useRef('Carregando...')
-    const attendeesPageTitle = useRef('Carregando...')
-    const attendeesPageDescription = useRef('...')
-    const eventsPageDescription = useRef('...')
     const [activeTab, setActiveTab] = useState<'events' | 'attendees'>('attendees')
     const [page, setPage] = useState(url.current.searchParams.has('page') ? Number(url.current.searchParams.get('page')) : 1)
     const [attendees, setAttendees] = useState<AttendeeProps[]>()
+    const [event, setEvent] = useState<EventProps>()
     const [events, setEvents] = useState<EventProps[]>()
     const [search, setSearch] = useState(url.current.searchParams.get('search') ?? '')
+    const [currentEventId, setCurrentEventId] = useState('7f968e71-187e-469e-95b1-dc861048194d') //'ecb57664-fbe5-42ad-8bd5-493f69d21736'
     
     useEffect(() =>{
-        const eventExampleId = '7f968e71-187e-469e-95b1-dc861048194d' //'ecb57664-fbe5-42ad-8bd5-493f69d21736'
-        const urlEvent = new URL(`https://pass-in-nodejs.vercel.app/events/${eventExampleId}`)
-        const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${eventExampleId}/attendees`)
+        const urlEvent = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEventId}`)
+        const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEventId}/attendees`)
         const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
 
         if(search.length > 0) {
             urlAttendees.searchParams.set('query', search)
         }
-        
-        fetch(urlEvent).then(response => response.json()).then(data => {
-            attendeesPageTitle.current = data.event.title ?? 'Participantes'
-        })
-        fetch(urlAttendees).then(response => response.json()).then(data => {
-            setAttendees(data.attendees)
-            attendeesPageDescription.current = data.attendees.length > 0 ? 'Lista de participantes.' : 'Não há participantes.'
-        })
-        fetch(urlEvents).then(response => response.json()).then(data => {
-            setEvents(data.events)
-            eventsPageTitle.current = data.events.length === 0 ? 'Não há eventos' : 'Eventos'
-            eventsPageDescription.current = data.events.length > 0 ? 'Lista de eventos.' : 'Não há eventos.'
-        })
-    }, [search])
+
+        fetch(urlAttendees).then(response => response.json()).then(data => setAttendees(data.attendees))
+        fetch(urlEvent    ).then(response => response.json()).then(data => setEvent(data.event))
+        fetch(urlEvents   ).then(response => response.json()).then(data => setEvents(data.events))
+    }, [currentEventId, search])
 
     // Evita páginas invalidas ao realizar buscas.
     // Sempre redireciona para a primeira página.
@@ -64,8 +52,7 @@ export function App() {
         {activeTab === 'events' ?
             <>
                 <PageHeader
-                    title={eventsPageTitle.current}
-                    description={eventsPageDescription.current}
+                    title='Eventos'
                 />
                 {events && events.length > 0 ?
                     <Table
@@ -74,15 +61,21 @@ export function App() {
                         page={page} 
                         itemsPerPage={10} 
                         setPage={setPage} 
-                        children={<Events events={events} page={page} itemsPerPage={10} />}
+                        children={<Events
+                            setCurrentEventId={setCurrentEventId}
+                            setActiveTab={setActiveTab}
+                            events={events}
+                            page={page}
+                            itemsPerPage={10}
+                        />}
                     />
                 : ''}
             </>
         :
             <>
                 <PageHeader
-                    title={attendeesPageTitle.current}
-                    description={attendeesPageDescription.current}
+                    title={!event ? 'Carregando...' : event.title ?? 'Participantes'}
+                    description={!attendees ? '...' : attendees.length > 0 ? event?.details : 'Não há participantes.'}
                 />
                 {attendees && attendees.length > 0 || search.length > 0 ?
                     <>

@@ -31,24 +31,26 @@ export function Attendees({ attendees, page, itemsPerPage }: AttendeesProps) {
                 const checkedInAt = attendee.checkedInAt !== null ? dayjs().to(attendee.checkedInAt) : ''
 
                 return (
-                    <tr key={attendee.id} className='border-t border-white/10 hover:bg-white/5 transition-all'>
-                        <td className='px-5'>
+                    <tr key={attendee.id}>
+                        <td>
                             <Checkbox name='item' />
                         </td>
                         <td>{attendee.id}</td>
-                        <td className='py-3 flex flex-col gap-1'>
-                            <div className='font-semibold text-white'>
-                                {attendee.name}
-                            </div>
-                            <div className='text-xs'>
-                                {attendee.email}
+                        <td>
+                            <div className='flex flex-col gap-1 self-center'>
+                                <div className='font-semibold text-white'>
+                                    {attendee.name}
+                                </div>
+                                <div className='text-xs -translate-y-1'>
+                                    {attendee.email}
+                                </div>
                             </div>
                         </td>
                         <td>{createdAt}</td>
                         <td>
                             <TableCheckIn date={checkedInAt} />
                         </td>
-                        <td className='text-right px-5'>
+                        <td>
                             <Button children={<ThreeDotsIcon />} />
                         </td>
                     </tr>

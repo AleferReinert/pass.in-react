@@ -33,28 +33,32 @@ export function Table({ headers, children, data, page, setPage, itemsPerPage }: 
 
     return (
         <>
-            <div className='border border-white/10 rounded-lg'>
+            <div className='border-white/10 rounded-lg'>
                 <table className='w-full text-left text-sm text-zinc-300'>
-                    <thead>
+                    <thead className='text-white leading-none font-semibold [&_th]:py-4 [&_th:first-child]:px-4'>
                         <tr>
-                            <th className='px-5 w-0'>
+                            <th className='w-0'>
                                 <Checkbox checked={checkboxControllerState} onChange={() => toggleCheckboxes()} />
                             </th>
                             {headers.map((header, index) => {
-                                return (
-                                    <th key={index} className='text-white py-5 leading-none font-semibold'>
-                                        {header}
-                                    </th>
-                                )
+                                return <th key={index}>{header}</th>
                             })}
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className='
+                        [&_tr]:border-t
+                        [&_tr]:border-white/10
+                        hover:[&_tr]:bg-white/5
+                        [&_tr]:transition-all 
+                        [&_td]:py-4 
+                        [&_td:first-child]:px-4 
+                        [&_td:last-child]:px-4 [&_td:last-child]:text-right
+                    '>
                         {children}
                     </tbody>
                     <tfoot className='border-t border-white/10'>
                         <tr>
-                            <td colSpan={6} className='p-5'>
+                            <td colSpan={6} className='py-4'>
                                 <Pagination
                                     page={page}
                                     setPage={setPage}
