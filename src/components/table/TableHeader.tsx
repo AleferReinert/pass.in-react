@@ -28,11 +28,11 @@ export function TableHeader({ children }: TableHeaderProps) {
 
     return (
         <thead className='
-            text-white leading-none font-semibold 
-            [&_th]:p-4
-            [&_th:first-child]:pl-0
-            [&_th:last-child]:px-0
+            text-white leading-none font-semibold
             border-b border-zinc-800
+            [&_th]:p-4
+            [&_th]:pl-0
+            [&_th:last-child]:px-0
             sm:[&_th]:pr-4
             sm:[&_th:first-child]:pl-4
         '>

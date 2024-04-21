@@ -76,14 +76,14 @@ export function Attendees({ data, event, search, onSearchInputChange, itemsPerPa
                                         {item.checkedInAt ?
                                             <>
                                                 <CheckIcon className='text-green-400 inline-block' />
-                                                <span className='hidden sm:inline'>
+                                                <span className='hidden md:inline'>
                                                     {dayjs().to(item.checkedInAt)}
                                                 </span>
                                             </>
                                             :
                                             <>
                                                 <XIcon className='text-red-400 inline-block' />
-                                                <span className='hidden sm:inline text-zinc-500'>
+                                                <span className='hidden md:inline text-zinc-500'>
                                                     Não fez check-in
                                                 </span>
                                             </>
