@@ -9,8 +9,8 @@ export interface SearchProps {
 export function Search({ search, onSearchInputChange }: SearchProps) {
 
     return(
-        <div className='flex gap-2 pl-3 rounded-lg w-72 border border-white/10 text-sm h-[34px] items-center mb-4'>
-            <MagnifyingGlassIcon className='size-4 text-orange-400' />
+        <div className='flex gap-2 pl-3 rounded-lg border border-zinc-800 w-full sm:w-[280px] text-sm h-[34px] items-center mb-4'>
+            <MagnifyingGlassIcon className='size-4 text-emerald-200' />
             <input
                 type='text'
                 value={search}

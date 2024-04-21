@@ -7,7 +7,8 @@ export function Button({ ...props }: ComponentProps<'button'>){
             {...props}
             title={props.disabled ? '' : props.title}
             className={`
-                border border-zinc-800
+                text-white
+                border border-zinc-700
                 bg-zinc-800
                 rounded-lg
                 size-7 
@@ -15,7 +16,8 @@ export function Button({ ...props }: ComponentProps<'button'>){
                 text-base
                 inline-flex items-center justify-center
                 hover:bg-orange-400 hover:text-black 
-                disabled:bg-transparent disabled:text-zinc-800
+                disabled:bg-zinc-900 disabled:text-zinc-500 disabled:border-zinc-800
+                focus-visible:bg-zinc-700 focus-visible:text-white
             `}
         >
              {props.children}

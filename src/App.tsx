@@ -5,9 +5,6 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
 import { EventProps, Events } from './components/Events';
 import { AttendeeProps, Attendees } from './components/Attendees';
-import { Table } from './components/Table';
-import { PageHeader } from './components/PageHeader';
-import { Search } from './components/Search';
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
@@ -35,8 +32,6 @@ export function App() {
         fetch(urlEvents   ).then(response => response.json()).then(data => setEvents(data.events))
     }, [currentEventId, search])
 
-    // Evita páginas invalidas ao realizar buscas.
-    // Sempre redireciona para a primeira página.
     function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
         setSearch(event.target.value)
         url.current.searchParams.set('search', event.target.value)
@@ -46,53 +41,20 @@ export function App() {
     }
 
   return (
-    <div className='max-w-[1216px] mx-auto py-5'>
-        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className='max-w-[1216px] mx-auto p-3 sm:p-6 md:p-8'>
+        <Header activeTab={activeTab} setActiveTab={setActiveTab} setPage={setPage} />
 
         {activeTab === 'events' ?
-            <>
-                <PageHeader
-                    title='Eventos'
-                />
-                {events && events.length > 0 ?
-                    <Table
-                        headers={['Evento', 'Descrição', 'Limite de participantes', null]}
-                        data={events} 
-                        page={page} 
-                        itemsPerPage={10} 
-                        setPage={setPage} 
-                        children={<Events
-                            setCurrentEventId={setCurrentEventId}
-                            setActiveTab={setActiveTab}
-                            events={events}
-                            page={page}
-                            itemsPerPage={10}
-                        />}
-                    />
-                : ''}
-            </>
+            <Events
+                data={events} page={page} setPage={setPage} itemsPerPage={10} 
+                setActiveTab={setActiveTab} setCurrentEventId={setCurrentEventId}
+            />
         :
-            <>
-                <PageHeader
-                    title={!event ? 'Carregando...' : event.title ?? 'Participantes'}
-                    description={!attendees ? '...' : attendees.length > 0 ? event?.details : 'Não há participantes.'}
-                />
-                {attendees && attendees.length > 0 || search.length > 0 ?
-                    <>
-                        <Search search={search} onSearchInputChange={onSearchInputChange} />
-                        <Table 
-                            headers={['Código', 'Participante', 'Data de inscrição', 'Data do check-in', null]}
-                            data={attendees} 
-                            page={page} 
-                            setPage={setPage} 
-                            itemsPerPage={10} 
-                            children={<Attendees attendees={attendees} page={page} itemsPerPage={10} />}
-                        />
-                    </>
-                : 
-                    ''
-                }
-            </>
+            <Attendees 
+                data={attendees} event={event} 
+                search={search} onSearchInputChange={onSearchInputChange} 
+                page={page} setPage={setPage} itemsPerPage={10}
+            />
         }
     </div>
   )
