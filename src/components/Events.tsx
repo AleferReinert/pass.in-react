@@ -14,7 +14,6 @@ export interface EventProps {
     title: string
     slug: string
     details: string
-    attendeesAmount: number
     maximumAttendees: number
 }
 
