@@ -45,7 +45,7 @@ export function TableFooter({ data, page, setPage, itemsPerPage }: TableFooterPr
         <tfoot>
             <tr>
                 <td colSpan={10}>
-                    <div className='sm:flex sm:items-center sm:justify-between sm:gap-2 py-4 px-1.5 sm:px-4'>
+                    <div className='sm:flex sm:items-center sm:justify-between sm:gap-2 py-4 px-2 sm:px-4'>
                         <div className='hidden sm:block'>
                             {dataAmount > 0
                                 ? `Mostrando ${visibleItems()} de ${dataAmount} itens` 

@@ -60,7 +60,7 @@ export function Events({ data, page, setPage, itemsPerPage, setCurrentEventId, s
                                 </td>
                                 <td className='hidden sm:table-cell'>{item.details}</td>
                                 <td>{item.maximumAttendees}</td>
-                                <td><Button children={<ThreeDotsIcon />} /></td>
+                                <td><Button bgTransparent children={<ThreeDotsIcon />} /></td>
                             </tr>
                         );
                     })}

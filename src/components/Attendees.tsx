@@ -36,9 +36,9 @@ export function Attendees({ data, event, search, onSearchInputChange, itemsPerPa
             title={!event ? 'Carregando...' : event.title ?? 'Participantes'}
             description={!data ? '' : data.length > 0 ? event?.details : 'Não há participantes.'}
         />
-        {data && data.length > 0 || search.length > 0 ? 
+        {data && data.length > 0 || search.length >= 0 ? 
             <>
-            <Search search={search} onSearchInputChange={onSearchInputChange} />
+            <Search placeholder='Buscar participante...' search={search} onSearchInputChange={onSearchInputChange} />
             <Table>
                 <TableHeader>
                     <th>
@@ -72,7 +72,7 @@ export function Attendees({ data, event, search, onSearchInputChange, itemsPerPa
                                     {dayjs().to(item.createdAt)}
                                 </td>
                                 <td>
-                                    <div className='text-center sm:flex sm:text-left items-center gap-1'>
+                                    <div className='sm:flex items-center gap-1'>
                                         {item.checkedInAt ?
                                             <>
                                                 <CheckIcon className='text-green-400 inline-block' />
@@ -91,7 +91,7 @@ export function Attendees({ data, event, search, onSearchInputChange, itemsPerPa
                                     </div>
                                 </td>
                                 <td>
-                                    <Button children={<ThreeDotsIcon />} />
+                                    <Button children={<ThreeDotsIcon />} bgTransparent />
                                 </td>
                             </tr>
                         );
