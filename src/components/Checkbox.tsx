@@ -4,8 +4,7 @@ interface CheckboxProps extends ComponentProps<'input'> {}
 
 export function Checkbox({...props}: CheckboxProps) {
     return (
-        <input
-            {...props}
+        <input {...props}
             type='checkbox'
             className={`
                 border size-4 bg-transparent rounded-sm border-white/10 flex self-center
@@ -15,6 +14,6 @@ export function Checkbox({...props}: CheckboxProps) {
                 checked:focus:bg-orange-400
                 checked:hover:bg-orange-400
             `}
-            />
+        />
     )
 }

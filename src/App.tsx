@@ -4,33 +4,32 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
 import { EventProps, Events } from './components/Events';
-import { AttendeeProps, Attendees } from './components/Attendees';
+import { Attendees } from './components/Attendees';
+import Loading from './components/Loading';
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
 export function App() {
     const url = useRef(new URL(window.location.toString()))
     const [activeTab, setActiveTab] = useState<'events' | 'attendees'>('attendees')
-    const [page, setPage] = useState(url.current.searchParams.has('page') ? Number(url.current.searchParams.get('page')) : 1)
-    const [attendees, setAttendees] = useState<AttendeeProps[]>()
-    const [event, setEvent] = useState<EventProps>()
     const [events, setEvents] = useState<EventProps[]>()
+    const [currentEvent, setCurrentEvent] = useState<EventProps>()
     const [search, setSearch] = useState(url.current.searchParams.get('search') ?? '')
-    const [currentEventId, setCurrentEventId] = useState('7f968e71-187e-469e-95b1-dc861048194d') //'ecb57664-fbe5-42ad-8bd5-493f69d21736'
+    const [page, setPage] = useState(url.current.searchParams.has('page') ? Number(url.current.searchParams.get('page')) : 1)
     
     useEffect(() =>{
-        const urlEvent = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEventId}`)
-        const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEventId}/attendees`)
         const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
-
-        if(search.length > 0) {
-            urlAttendees.searchParams.set('query', search)
+        fetch(urlEvents).then(response => response.json()).then(data => {
+            setEvents(data.events)
+            setCurrentEvent(data.events[0])
+        })
+        
+        if(url.current.searchParams.has('page')) {
+            url.current.searchParams.set('page', (page).toString())
+            window.history.pushState({}, '', url.current)
+            setPage(Number(url.current.searchParams.get('page')))
         }
-
-        fetch(urlAttendees).then(response => response.json()).then(data => setAttendees(data.attendees))
-        fetch(urlEvent    ).then(response => response.json()).then(data => setEvent(data.event))
-        fetch(urlEvents   ).then(response => response.json()).then(data => setEvents(data.events))
-    }, [currentEventId, search])
+    }, [search, page])
 
     function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
         setSearch(event.target.value)
@@ -40,22 +39,26 @@ export function App() {
         setPage(1)
     }
 
-  return (
-    <div className='max-w-[1216px] mx-auto p-3 sm:p-6 md:p-8'>
-        <Header activeTab={activeTab} setActiveTab={setActiveTab} setPage={setPage} />
+    if(!events) {
+        return <Loading />
+    }
 
-        {activeTab === 'events' ?
+    return (
+        <div className='max-w-[1216px] mx-auto px-3 sm:px-6 md:px-8'>
+            <Header activeTab={activeTab} setActiveTab={setActiveTab} setPage={setPage} />
+
             <Events
-                data={events} page={page} setPage={setPage} itemsPerPage={10} 
-                setActiveTab={setActiveTab} setCurrentEventId={setCurrentEventId}
+                className={activeTab === 'events' ? 'block' : 'hidden'}
+                data={events} setActiveTab={setActiveTab}
+                setCurrentEvent={setCurrentEvent}
+                page={page} setPage={setPage} itemsPerPage={10} 
             />
-        :
             <Attendees 
-                data={attendees} event={event} 
+                className={activeTab === 'attendees' ? 'block' : 'hidden'}
+                event={currentEvent} 
                 search={search} onSearchInputChange={onSearchInputChange} 
                 page={page} setPage={setPage} itemsPerPage={10}
             />
-        }
-    </div>
-  )
+        </div>
+    )
 }

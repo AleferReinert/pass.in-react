@@ -8,67 +8,61 @@ import { TableHeader } from './table/TableHeader';
 import { TableBody } from './table/TableBody';
 import { TableFooter } from './table/TableFooter';
 import { PageHeader } from './PageHeader';
+import { ComponentProps } from 'react';
 
 export interface EventProps {
-    id: number
+    id: string
     title: string
     slug: string
     details: string
     maximumAttendees: number
 }
 
-interface EventsProps extends TableFooterProps, Pick<HeaderProps, 'setActiveTab'> {
+interface EventsProps extends TableFooterProps, Pick<HeaderProps, 'setActiveTab'>, ComponentProps<'div'> {
     data: EventProps[] | undefined
-    setCurrentEventId: React.Dispatch<React.SetStateAction<string>>
+    setActiveTab: React.Dispatch<React.SetStateAction<"events" | "attendees">>
+    setCurrentEvent: React.Dispatch<React.SetStateAction<EventProps | undefined>>
 }
 
-export function Events({ data, page, setPage, itemsPerPage, setCurrentEventId, setActiveTab }: EventsProps) {
-    function goToAttendees(id: number) {
-        setCurrentEventId((id).toString())
-        setTimeout(() => setActiveTab('attendees'), 400);
-    }
-
-    if(data?.length === 0) {
-        return <PageHeader title='Eventos' />
+export function Events({ data, setActiveTab, setCurrentEvent, page, setPage, itemsPerPage, ...props }: EventsProps) {
+    function goToAttendees(event: EventProps) {
+        setActiveTab('attendees')
+        setCurrentEvent(event)
     }
 
     return (
-        <>
-        <PageHeader title='Eventos' description={data?.length === 0 ? 'Não há eventos no momento.' : ''} />
-        
-        {data && data.length > 0 ? 
-            <Table>
-                <TableHeader>
-                    <th>Evento</th>
-                    <th className='hidden sm:table-cell'>Descrição</th>
-                    <th>Vagas totais</th>
-                    <th></th>
-                </TableHeader>
-                <TableBody>
-                    {data?.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(item => {
-                        return (
-                            <tr key={item.id}>
-                                <td><Checkbox name='item' value={item.id} /></td>
-                                <td>
-                                    <button 
-                                        className='hover:text-orange-400 text-left' 
-                                        onClick={() => goToAttendees(item.id)}
-                                    >
-                                        {item.title}
-                                    </button>
-                                </td>
-                                <td className='hidden sm:table-cell'>{item.details}</td>
-                                <td>{item.maximumAttendees}</td>
-                                <td><Button bgTransparent children={<ThreeDotsIcon />} /></td>
-                            </tr>
-                        );
-                    })}
-                </TableBody>
-                {data.length > itemsPerPage ? 
-                    <TableFooter data={data} page={page} setPage={setPage} itemsPerPage={itemsPerPage} />
-                : ''}
-            </Table>
-        : ''}
-        </>
+        <div {...props}>
+            <PageHeader title='Eventos' description={data?.length === 0 ? 'Não há eventos no momento.' : ''} />
+            
+            {data && data.length > 0 && 
+                <Table>
+                    <TableHeader>
+                        <th>Evento</th>
+                        <th className='hidden sm:table-cell'>Descrição</th>
+                        <th>Vagas totais</th>
+                        <th></th>
+                    </TableHeader>
+                    <TableBody>
+                        {data?.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(item => {
+                            console.log(item)
+                            return (
+                                <tr key={item.id} className='sm:hover:text-orange-400 sm:hover:cursor-pointer'
+                                    onClick={() => goToAttendees(item)}
+                                >
+                                    <td><Checkbox name='item' value={item.id} /></td>
+                                    <td>{item.title}</td>
+                                    <td className='hidden sm:table-cell'>{item.details}</td>
+                                    <td>{item.maximumAttendees}</td>
+                                    <td><Button bgTransparent children={<ThreeDotsIcon />} /></td>
+                                </tr>
+                            );
+                        })}
+                    </TableBody>
+                    {data.length > itemsPerPage && 
+                        <TableFooter data={data} page={page} setPage={setPage} itemsPerPage={itemsPerPage} />
+                    }
+                </Table>
+            }
+        </div>
     )
 }

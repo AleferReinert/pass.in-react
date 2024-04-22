@@ -10,7 +10,7 @@ export function Header({ activeTab, setActiveTab, setPage }: HeaderProps) {
     const active = activeTab === 'events' ? 'first:*:text-white' : 'last:*:text-white'
 
     return (
-        <header className='flex items-center gap-5 pb-4 sm:pb-7 text-zinc-400'>
+        <header className='flex items-center gap-5 pt-4 pb-7 sm:pt-7 text-zinc-400'>
             <img src={NlwUniteIcon} />
             <nav className={'*:focus-visible:ring-0 flex gap-5 font-medium text-sm ' + active}>
                 <button onClick={() => {

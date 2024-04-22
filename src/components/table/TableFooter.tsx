@@ -46,14 +46,14 @@ export function TableFooter({ data, page, setPage, itemsPerPage }: TableFooterPr
             <tr>
                 <td colSpan={10}>
                     <div className='py-4 sm:flex sm:items-center sm:justify-between sm:gap-2 sm:px-4'>
-                        <div className='hidden sm:block'>
-                            {dataAmount > 0
-                                ? `Mostrando ${visibleItems()} de ${dataAmount} itens` 
-                                : 'Nenhum participante encontrado.'
-                            }
-                        </div>
-
-                        {pagesAmount > 1 ? 
+                        {dataAmount > 0 ? 
+                            <div className='hidden sm:block'>
+                                {dataAmount > 0 && `Mostrando ${visibleItems()} de ${dataAmount} itens`}
+                            </div>
+                        : 
+                            'Nenhum participante encontrado.'
+                        }
+                        {pagesAmount > 1 &&
                             <div className='flex justify-between items-center'>
                                 <span className='pr-8'>Página {page} de {pagesAmount}</span>
 
@@ -86,8 +86,6 @@ export function TableFooter({ data, page, setPage, itemsPerPage }: TableFooterPr
                                     </nav>
                                 </div>
                             </div>
-                        : 
-                            ''
                         }
                     </div>
                 </td>

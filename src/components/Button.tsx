@@ -7,8 +7,7 @@ interface ButtonProps extends ComponentProps<'button'> {
 export function Button({ bgTransparent, ...props }: ButtonProps){
 
     return(
-        <button
-            {...props}
+        <button {...props}
             title={props.disabled ? '' : props.title}
             className={`
                 text-white text-base
