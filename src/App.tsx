@@ -1,64 +1,106 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { Header } from './components/Header';
-import dayjs from 'dayjs';
+import { createContext, useEffect, useRef, useState } from 'react'
+import { Header } from './components/Header'
+import { EventProps, Events } from './components/Events'
+import { AttendeeProps, Attendees } from './components/Attendees'
+import { PageHeader } from './components/PageHeader'
+import { Search } from './components/Search'
+import { useUrl } from './hooks/useUrl'
+import Loading from './components/Loading'
+import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/pt-br'
-import { EventProps, Events } from './components/Events';
-import { Attendees } from './components/Attendees';
-import Loading from './components/Loading';
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
+export type PageContextProps = {
+    page: number
+    setPage: React.Dispatch<React.SetStateAction<number>>
+    itemsPerPage: number
+}
+
+export const PageContext = createContext<PageContextProps>({
+    page: 1,
+    setPage: () => {},
+    itemsPerPage: 10
+})
+
 export function App() {
-    const url = useRef(new URL(window.location.toString()))
+    const { hasUrlParam, getUrlParamValue, updateUrlParams } = useUrl()
     const [activeTab, setActiveTab] = useState<'events' | 'attendees'>('attendees')
     const [events, setEvents] = useState<EventProps[]>()
-    const [currentEvent, setCurrentEvent] = useState<EventProps>()
-    const [search, setSearch] = useState(url.current.searchParams.get('search') ?? '')
-    const [page, setPage] = useState(url.current.searchParams.has('page') ? Number(url.current.searchParams.get('page')) : 1)
-    
+    const [currentEvent, setCurrentEvent] = useState<EventProps | null>(null)
+    const [attendees, setAttendees] = useState<AttendeeProps[]>()
+    const [search, setSearch] = useState(getUrlParamValue('search') ?? '')
+    const pageParam = useRef(Number(getUrlParamValue('page')))
+    const itemsPerPage = 10
+    const [page, setPage] = useState(() => { 
+        
+        // Verifica se o parâmetro page da URL é válido
+        if(!hasUrlParam('page') || pageParam.current <= 1 || isNaN(pageParam.current) || !Number.isInteger(pageParam.current)) {
+            updateUrlParams({page: null})
+            return 1
+        }
+        return pageParam.current
+    })
+
     useEffect(() =>{
         const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
+
         fetch(urlEvents).then(response => response.json()).then(data => {
             setEvents(data.events)
             setCurrentEvent(data.events[0])
         })
-        
-        if(url.current.searchParams.has('page')) {
-            url.current.searchParams.set('page', (page).toString())
-            window.history.pushState({}, '', url.current)
-            setPage(Number(url.current.searchParams.get('page')))
-        }
-    }, [search, page])
+    }, [])
+    
+    useEffect(() => {
+        if(currentEvent) {
+            const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEvent.id}/attendees?query=${search}`)
 
-    function onSearchInputChange(event: ChangeEvent<HTMLInputElement>) {
-        setSearch(event.target.value)
-        url.current.searchParams.set('search', event.target.value)
-        url.current.searchParams.delete('page')
-        window.history.pushState({}, '', url.current)
-        setPage(1)
-    }
+            fetch(urlAttendees).then(response => response.json()).then(data => {
+                setAttendees(data.attendees)
+                
+                // Redireciona para a 1ª página se 'page' na url for mais alto que a última página
+                const pagesAmount = Math.ceil(data.attendees.length / itemsPerPage)
+                const invalidPage = pageParam.current > pagesAmount
+                invalidPage && setPage(1)
+
+                // Atualiza os parâmetros
+                updateUrlParams({
+                    page: (pageParam.current > pagesAmount) ? null : getUrlParamValue('page'),
+                    search: (search.length > 0) ? search : null
+                })
+            })
+        }
+    }, [currentEvent, search])
 
     if(!events) {
-        return <Loading />
+        return <Loading full />
     }
-
+    
     return (
-        <div className='max-w-[1216px] mx-auto px-3 sm:px-6 md:px-8'>
-            <Header activeTab={activeTab} setActiveTab={setActiveTab} setPage={setPage} />
+        <PageContext.Provider value={{page, setPage, itemsPerPage}}>
+            <div className='max-w-[1216px] mx-auto p-3 pt-0 sm:p-6 sm:pt-0 md:p-8 md:pt-0'>
+                <Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} />
 
-            <Events
-                className={activeTab === 'events' ? 'block' : 'hidden'}
-                data={events} setActiveTab={setActiveTab}
-                setCurrentEvent={setCurrentEvent}
-                page={page} setPage={setPage} itemsPerPage={10} 
-            />
-            <Attendees 
-                className={activeTab === 'attendees' ? 'block' : 'hidden'}
-                event={currentEvent} 
-                search={search} onSearchInputChange={onSearchInputChange} 
-                page={page} setPage={setPage} itemsPerPage={10}
-            />
-        </div>
+                <PageHeader
+                    title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'} 
+                    description={activeTab === 'events' ? (events.length ? '' : 'Não há eventos no momento.') : currentEvent?.details}
+                />
+
+                {activeTab === 'attendees' &&
+                    <Search placeholder='Buscar participante...' search={search} setSearch={setSearch} />
+                }
+
+                <Events
+                    className={activeTab === 'events' ? 'block' : 'hidden'}
+                    events={events} setActiveTab={setActiveTab}
+                    setCurrentEvent={setCurrentEvent}
+                />
+                <Attendees 
+                    className={activeTab === 'attendees' ? 'block' : 'hidden'}
+                    attendees={attendees}
+                />
+            </div>
+        </PageContext.Provider>
     )
 }

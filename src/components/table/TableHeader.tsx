@@ -10,12 +10,12 @@ export function TableHeader({ children }: TableHeaderProps) {
     
     function toggleCheckboxes() {
         const checkboxes = document.querySelectorAll(`input[name="item"]`) as NodeListOf<HTMLInputElement>
-        let allSelected = true;
+        let allSelected = true
         setCheckboxControllerState(true)
 
         checkboxes.forEach(e => {
             if (!e.checked) {
-                allSelected = false;
+                allSelected = false
                 e.checked = true
             }
         })

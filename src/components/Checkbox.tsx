@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps } from 'react'
 
 interface CheckboxProps extends ComponentProps<'input'> {}
 
