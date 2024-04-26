@@ -30,7 +30,6 @@ export function Search({ placeholder, search, setSearch }: SearchProps) {
                 name='search'
                 type='text'
                 value={search}
-                autoFocus
                 placeholder={placeholder}
                 onChange={e => onInputChange(e)}
                 className='border-0 h-auto p-0 bg-transparent flex-1 outline-none focus:ring-0'
