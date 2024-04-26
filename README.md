@@ -1,6 +1,6 @@
 # NLW Unite - pass.in (React)
 
-<img src="https://github.com/AleferReinert/pass-in-web/assets/5350199/1be1e4b4-110d-4ea0-b8da-c2a2fa451cab" width="768" height="384">
+<img src="https://github.com/AleferReinert/pass-in-web/assets/5350199/1be1e4b4-110d-4ea0-b8da-c2a2fa451cab" width="768">
 
 ## Descrição
 

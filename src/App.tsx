@@ -18,11 +18,7 @@ export type PageContextProps = {
     itemsPerPage: number
 }
 
-export const PageContext = createContext<PageContextProps>({
-    page: 1,
-    setPage: () => {},
-    itemsPerPage: 10
-})
+export const PageContext = createContext<PageContextProps>({page: 1, setPage: () => {}, itemsPerPage: 10})
 
 export function App() {
     const { hasUrlParam, getUrlParamValue, updateUrlParams } = useUrl()
@@ -54,6 +50,8 @@ export function App() {
     
     useEffect(() => {
         if(currentEvent) {
+            setAttendees(undefined) // Evita mostrar dados errados ao trocar de evento
+
             const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEvent.id}/attendees?query=${search}`)
 
             fetch(urlAttendees).then(response => response.json()).then(data => {
