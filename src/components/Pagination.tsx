@@ -4,8 +4,8 @@ import {FiChevronLeft as ChevronLeftIcon,
     FiChevronsLeft as ChevronsLeftIcon, 
     FiChevronsRight as ChevronsRightIcon,
 } from 'react-icons/fi'
-import { EventProps } from './Events'
-import { AttendeeProps } from './Attendees'
+import { EventProps } from './EventList'
+import { AttendeeProps } from './AttendeeList'
 import { useContext } from 'react'
 import { PageContext } from '../App'
 import { useUrl } from '../hooks/useUrl'

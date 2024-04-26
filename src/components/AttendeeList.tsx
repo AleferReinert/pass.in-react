@@ -1,6 +1,6 @@
-import { Table } from './table/Table'
-import { TableHeader } from './table/TableHeader'
-import { TableBody } from './table/TableBody'
+import { Table } from './Table'
+import { TableHeader } from './TableHeader'
+import { TableBody } from './TableBody'
 import { Checkbox } from './Checkbox'
 import { Button } from './Button'
 import { FiCheck as CheckIcon, FiX as XIcon } from 'react-icons/fi'
@@ -92,7 +92,11 @@ export function Attendees({ attendees, ...props }: AttendeesProps) {
                                     </div>
                                 </td>
                                 <td>
-                                    <Button bgTransparent>
+                                    {/*
+                                        Desabilitado por não ter ações.
+                                        Não foi usado disable para não interferir nos estilos.
+                                    */}
+                                    <Button bgTransparent className='pointer-events-none'>
                                         <ThreeDotsIcon />
                                     </Button>
                                 </td>

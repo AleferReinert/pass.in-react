@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react'
-import { Checkbox } from '../Checkbox'
+import { Checkbox } from './Checkbox'
 
 interface TableHeaderProps {
     children: ReactNode[]

@@ -17,10 +17,10 @@ export const useUrl = () => {
         return parsedUrl.searchParams.get(param)
     }
 
-    /*  Atualiza os parâmetros da url
+    /*  Atualiza os parâmetros da url.
         updateUrlParams([
-            {myParam: 'myValue'},   -> para atualizar o valor
-            {myParam2: null}        -> para deletar o parâmetro
+            {myParam: 'myValue'},   -> Atualiza o valor
+            {myParam2: null}        -> Deleta o parâmetro
         ])
     */
     function updateUrlParams(paramsToUpdate: ParamUpdate): void {

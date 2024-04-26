@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Pagination, PaginationProps } from '../Pagination'
+import { Pagination, PaginationProps } from './Pagination'
 
 interface TableProps extends PaginationProps {
     children: ReactNode

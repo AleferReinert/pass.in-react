@@ -1,10 +1,10 @@
 import { Button } from './Button'
 import { Checkbox } from './Checkbox'
 import { HeaderProps } from './Header'
-import { Table } from './table/Table'
+import { Table } from './Table'
 import { BsThreeDots as ThreeDotsIcon } from 'react-icons/bs'
-import { TableHeader } from './table/TableHeader'
-import { TableBody } from './table/TableBody'
+import { TableHeader } from './TableHeader'
+import { TableBody } from './TableBody'
 import { ComponentProps, useContext } from 'react'
 import { PageContext } from '../App'
 
@@ -42,24 +42,25 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                     <TableBody>
                         {events?.slice((page - 1) * itemsPerPage, page * itemsPerPage).map(item => {
                             return (
-                                <tr key={item.id} 
-                                    className='sm:hover:text-orange-400 sm:hover:cursor-pointer'
-                                    onClick={() => goToAttendees(item)}
-                                >
+                                <tr key={item.id} className='sm:hover:text-orange-400'>
                                     <td>
                                         <Checkbox name='item' value={item.id} />
                                     </td>
-                                    <td>
+                                    <td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
                                         {item.title}
                                     </td>
-                                    <td className='hidden sm:table-cell'>
+                                    <td onClick={() => goToAttendees(item)} className='hidden sm:table-cell hover:cursor-pointer'>
                                         {item.details}
                                     </td>
-                                    <td>
+                                    <td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
                                         {item.maximumAttendees}
                                     </td>
                                     <td>
-                                        <Button bgTransparent>
+                                        {/*
+                                            Desabilitado por não ter ações.
+                                            Não foi usado disable para não interferir nos estilos.
+                                        */}
+                                        <Button bgTransparent className='pointer-events-none'>
                                             <ThreeDotsIcon />
                                         </Button>
                                     </td>
