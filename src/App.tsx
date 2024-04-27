@@ -32,7 +32,7 @@ export function App() {
     const [events, setEvents] = useState<EventProps[]>()
     const [currentEvent, setCurrentEvent] = useState<EventProps | null>(null)
     const [attendees, setAttendees] = useState<AttendeeProps[]>()
-    const [activeTab, setActiveTab] = useState<'events' | 'attendees'>(attendees ? 'attendees' : 'events')
+    const [activeTab, setActiveTab] = useState<'events' | 'attendees'>('attendees')
     const [search, setSearch] = useState(getUrlParamValue('search') ?? '')
     const pageParam = useRef(Number(getUrlParamValue('page')))
     const itemsPerPage = 10
@@ -89,10 +89,10 @@ export function App() {
 
                 <PageHeader
                     title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'} 
-                    description={activeTab === 'events' ? (events.length ? '' : 'Não há eventos no momento.') : currentEvent?.details}
+                    description={activeTab === 'events' ? (events.length > 0 ? '' : 'Não há eventos no momento.') : currentEvent?.details}
                 />
 
-                {activeTab === 'attendees' &&
+                {activeTab === 'attendees' && currentEvent && currentEvent.attendeesAmount > 0 &&
                     <Search placeholder='Buscar participante...' search={search} setSearch={setSearch} />
                 }
 
