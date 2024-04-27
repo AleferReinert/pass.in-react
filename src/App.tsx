@@ -85,14 +85,14 @@ export function App() {
     return (
         <PageContext.Provider value={{page, setPage, itemsPerPage}}>
             <div className='max-w-[1216px] mx-auto p-3 pt-0 sm:p-6 sm:pt-0 md:p-8 md:pt-0'>
-                <Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} attendees={attendees} />
+                <Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} />
 
                 <PageHeader
                     title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'} 
                     description={activeTab === 'events' ? (events.length > 0 ? '' : 'Não há eventos no momento.') : currentEvent?.details}
                 />
 
-                {activeTab === 'attendees' && currentEvent && currentEvent.attendeesAmount > 0 &&
+                {activeTab === 'attendees' && currentEvent && currentEvent.attendeesAmount > 2 &&
                     <Search placeholder='Buscar participante...' search={search} setSearch={setSearch} />
                 }
 
