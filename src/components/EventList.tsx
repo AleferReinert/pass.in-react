@@ -36,7 +36,7 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                 <Table data={events}>
                     <TableHeader>
                         <th>Evento</th>
-                        <th className='hidden sm:table-cell'>Descrição</th>
+                        <th className='hidden md:table-cell'>Descrição</th>
                         <th>Vagas Preenchidas</th>
                         <th></th>
                     </TableHeader>
@@ -50,7 +50,7 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                                     <td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
                                         {item.title}
                                     </td>
-                                    <td onClick={() => goToAttendees(item)} className='hidden sm:table-cell hover:cursor-pointer'>
+                                    <td onClick={() => goToAttendees(item)} className='hidden md:table-cell hover:cursor-pointer'>
                                         {item.details}
                                     </td>
                                     <td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
