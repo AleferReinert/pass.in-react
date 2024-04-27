@@ -12,6 +12,12 @@ import 'dayjs/locale/pt-br'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
+// if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+//     // dev code
+// } else {
+//     // production code
+// }
+
 export type PageContextProps = {
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
@@ -21,6 +27,7 @@ export type PageContextProps = {
 export const PageContext = createContext<PageContextProps>({page: 1, setPage: () => {}, itemsPerPage: 10})
 
 export function App() {
+    const fetchBaseUrl = import.meta.env.MODE === 'development' ? 'http://localhost:3333' : 'https://pass-in-nodejs.vercel.app'
     const { hasUrlParam, getUrlParamValue, updateUrlParams } = useUrl()
     const [events, setEvents] = useState<EventProps[]>()
     const [currentEvent, setCurrentEvent] = useState<EventProps | null>(null)
@@ -40,8 +47,7 @@ export function App() {
     })
 
     useEffect(() =>{
-        const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
-        // const urlEvents = new URL('http://localhost:3333/events')
+        const urlEvents = new URL(`${fetchBaseUrl}/events`)
 
         fetch(urlEvents).then(response => response.json()).then(data => {
             setEvents(data.events)
@@ -53,8 +59,7 @@ export function App() {
         if(currentEvent) {
             setAttendees(undefined) // Evita mostrar dados errados ao trocar de evento
 
-            const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEvent.id}/attendees?query=${search}`)
-            // const urlAttendees = new URL(`http://localhost:3333/events/${currentEvent.id}/attendees?query=${search}`)
+            const urlAttendees = new URL(`${fetchBaseUrl}/events/${currentEvent.id}/attendees?query=${search}`)
 
             fetch(urlAttendees).then(response => response.json()).then(data => {
                 setAttendees(data.attendees)
