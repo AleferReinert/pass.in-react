@@ -3,13 +3,15 @@ import { SearchProps } from './Search'
 import NlwUniteIcon from '/nlw-united-icon.svg'
 import { PageContext } from '../App'
 import { useUrl } from '../hooks/useUrl'
+import { AttendeeProps } from './AttendeeList'
 
 export interface HeaderProps extends Pick<SearchProps, 'setSearch'> {
     activeTab: string
     setActiveTab: React.Dispatch<React.SetStateAction<"events" | "attendees">>
+    attendees: AttendeeProps[] | undefined
 }
 
-export function Header({ activeTab, setActiveTab, setSearch }: HeaderProps) {
+export function Header({ activeTab, setActiveTab, setSearch, attendees }: HeaderProps) {
     const { setPage } = useContext(PageContext)
     const { updateUrlParams } = useUrl()
     const active = activeTab === 'events' ? 'first:*:text-white' : 'last:*:text-white'
@@ -36,9 +38,12 @@ export function Header({ activeTab, setActiveTab, setSearch }: HeaderProps) {
                 <button className='focus-visible:outline-none' onClick={changeToEvents}>
                     Eventos
                 </button>
-                <button className='focus-visible:outline-none' onClick={changeToAttendees}>
-                    Participantes
-                </button>
+
+                {attendees &&
+                    <button className='focus-visible:outline-none' onClick={changeToAttendees}>
+                        Participantes
+                    </button>
+                }
             </nav>
         </header>
     )

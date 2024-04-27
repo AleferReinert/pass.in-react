@@ -22,10 +22,10 @@ export const PageContext = createContext<PageContextProps>({page: 1, setPage: ()
 
 export function App() {
     const { hasUrlParam, getUrlParamValue, updateUrlParams } = useUrl()
-    const [activeTab, setActiveTab] = useState<'events' | 'attendees'>('attendees')
     const [events, setEvents] = useState<EventProps[]>()
     const [currentEvent, setCurrentEvent] = useState<EventProps | null>(null)
     const [attendees, setAttendees] = useState<AttendeeProps[]>()
+    const [activeTab, setActiveTab] = useState<'events' | 'attendees'>(attendees ? 'attendees' : 'events')
     const [search, setSearch] = useState(getUrlParamValue('search') ?? '')
     const pageParam = useRef(Number(getUrlParamValue('page')))
     const itemsPerPage = 10
@@ -40,7 +40,8 @@ export function App() {
     })
 
     useEffect(() =>{
-        const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
+        // const urlEvents = new URL('https://pass-in-nodejs.vercel.app/events')
+        const urlEvents = new URL('http://localhost:3333/events')
 
         fetch(urlEvents).then(response => response.json()).then(data => {
             setEvents(data.events)
@@ -52,7 +53,8 @@ export function App() {
         if(currentEvent) {
             setAttendees(undefined) // Evita mostrar dados errados ao trocar de evento
 
-            const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEvent.id}/attendees?query=${search}`)
+            // const urlAttendees = new URL(`https://pass-in-nodejs.vercel.app/events/${currentEvent.id}/attendees?query=${search}`)
+            const urlAttendees = new URL(`http://localhost:3333/events/${currentEvent.id}/attendees?query=${search}`)
 
             fetch(urlAttendees).then(response => response.json()).then(data => {
                 setAttendees(data.attendees)
@@ -78,7 +80,7 @@ export function App() {
     return (
         <PageContext.Provider value={{page, setPage, itemsPerPage}}>
             <div className='max-w-[1216px] mx-auto p-3 pt-0 sm:p-6 sm:pt-0 md:p-8 md:pt-0'>
-                <Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} />
+                <Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} attendees={attendees} />
 
                 <PageHeader
                     title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'} 
@@ -91,7 +93,8 @@ export function App() {
 
                 <Events
                     className={activeTab === 'events' ? 'block' : 'hidden'}
-                    events={events} setActiveTab={setActiveTab}
+                    events={events}
+                    setActiveTab={setActiveTab}
                     setCurrentEvent={setCurrentEvent}
                 />
                 <Attendees 

@@ -14,6 +14,7 @@ export interface EventProps {
     slug: string
     details: string
     maximumAttendees: number
+    attendeesAmount: number
 }
 
 interface EventsProps extends Pick<HeaderProps, 'setActiveTab'>, ComponentProps<'div'> {
@@ -36,7 +37,7 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                     <TableHeader>
                         <th>Evento</th>
                         <th className='hidden sm:table-cell'>Descrição</th>
-                        <th>Vagas totais</th>
+                        <th>Vagas Preenchidas</th>
                         <th></th>
                     </TableHeader>
                     <TableBody>
@@ -53,6 +54,7 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                                         {item.details}
                                     </td>
                                     <td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
+                                        {item.attendeesAmount}/
                                         {item.maximumAttendees}
                                     </td>
                                     <td>
