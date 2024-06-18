@@ -41,7 +41,7 @@ O pass.in é uma aplicação de **gestão de participantes em eventos presenciai
 - **ESLint:** Uma ferramenta para identificar e corrigir problemas em seu código JavaScript.
 
 ## URL do Projeto
-Explore o projeto no link: [NLW Unite - pass.in](https://pass-in-nlw-unite.vercel.app)
+Explore o projeto no link: [Pass In](https://pass-in-nlw-unite.vercel.app)
 
 ## Crédito
 Projeto desenvolvido durante o NLW da [Rocketseat](https://github.com/Rocketseat).
