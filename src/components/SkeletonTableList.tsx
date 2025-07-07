@@ -45,7 +45,7 @@ export function SkeletonTableList() {
             sm:hover:[&_tr]:bg-neutral-800
         '
 				>
-					{[1, 2, 3, 4].map(item => {
+					{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => {
 						return (
 							<tr key={item}>
 								<td>
