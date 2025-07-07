@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { HiMagnifyingGlass as MagnifyingGlassIcon } from 'react-icons/hi2'
+import { PageContext } from '../contexts/PageContext'
 import { useUrl } from '../hooks/useUrl'
-import { PageContext } from './contexts/PageContext'
 
 export interface SearchProps {
 	placeholder?: string
@@ -39,3 +39,4 @@ export function Search({ placeholder, search, setSearch }: SearchProps) {
 		</div>
 	)
 }
+

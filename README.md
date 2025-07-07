@@ -2,10 +2,10 @@
 
 Aplicação web para gerenciamento de participantes em eventos presenciais.
 
-Desenvolvido durante o NLW da [Rocketseat](https://github.com/Rocketseat).
+Desenvolvido durante o NLW Unite da [Rocketseat](https://github.com/Rocketseat).
 
 - [Layout](https://www.figma.com/design/mHC6yBILFbaolx8uuZjpUP/pass.in--Community-?node-id=2007-1477&p=f&t=ivLxQxi2fawHS7yL-0)
-- [Material complementar](https://efficient-sloth-d85.notion.site/React-529e4443080a4d889f7a0714aa09348c)
+- [Material complementar](https://efficient-sloth-d85.notion.site/NLW-UNITE-bad7b350c332474d8f5e3b717f6808a6)
 
 ## Começando
 

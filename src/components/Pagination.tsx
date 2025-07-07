@@ -5,10 +5,10 @@ import {
 	FiChevronsLeft as ChevronsLeftIcon,
 	FiChevronsRight as ChevronsRightIcon
 } from 'react-icons/fi'
+import { PageContext } from '../contexts/PageContext'
 import { useUrl } from '../hooks/useUrl'
 import { AttendeeProps } from './AttendeeList'
 import { Button } from './Button'
-import { PageContext } from './contexts/PageContext'
 import { EventProps } from './EventList'
 
 export interface PaginationProps {
@@ -80,3 +80,4 @@ export function Pagination({ data }: PaginationProps) {
 		</>
 	)
 }
+

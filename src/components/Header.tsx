@@ -1,6 +1,6 @@
 import { useContext } from 'react'
+import { PageContext } from '../contexts/PageContext'
 import { useUrl } from '../hooks/useUrl'
-import { PageContext } from './contexts/PageContext'
 import { SearchProps } from './Search'
 import NlwUniteIcon from '/nlw-united-icon.svg'
 

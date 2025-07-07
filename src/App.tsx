@@ -3,12 +3,12 @@ import 'dayjs/locale/pt-br'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useEffect, useRef, useState } from 'react'
 import { AttendeeProps, Attendees } from './components/AttendeeList'
-import { PageContext } from './components/contexts/PageContext'
 import { EventProps, Events } from './components/EventList'
 import { Header } from './components/Header'
-import Loading from './components/Loading'
 import { PageHeader } from './components/PageHeader'
 import { Search } from './components/Search'
+import { SkeletonTableList } from './components/SkeletonTableList'
+import { PageContext } from './contexts/PageContext'
 import { useUrl } from './hooks/useUrl'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
@@ -75,33 +75,51 @@ export function App() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentEvent, search])
 
-	if (!events) {
-		return <Loading full />
-	}
-
 	return (
 		<PageContext.Provider value={{ page, setPage, itemsPerPage }}>
 			<div className='max-w-[1216px] mx-auto p-3 pt-0 sm:p-6 sm:pt-0 md:p-8 md:pt-0'>
 				<Header activeTab={activeTab} setActiveTab={setActiveTab} setSearch={setSearch} />
 
-				<PageHeader
-					title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'}
-					description={
-						activeTab === 'events' ? (events.length > 0 ? '' : 'Não há eventos no momento.') : currentEvent?.details
-					}
-				/>
-
-				{activeTab === 'attendees' && currentEvent && currentEvent.attendeesAmount > 2 && (
-					<Search placeholder='Buscar participante...' search={search} setSearch={setSearch} />
+				{events ? (
+					<PageHeader
+						title={activeTab === 'events' ? 'Eventos' : currentEvent?.title ?? 'Participantes'}
+						description={
+							activeTab === 'events' ? (events.length > 0 ? '' : 'Não há eventos no momento.') : currentEvent?.details
+						}
+					/>
+				) : (
+					<div className='pb-4 animate-pulse'>
+						<div className='bg-neutral-600 rounded-sm mb-2 w-[190px] h-[30px]' />
+						<div className='bg-neutral-600 rounded-sm w-full max-w-[456px] h-[22px]' />
+					</div>
 				)}
 
-				<Events
-					className={activeTab === 'events' ? 'block' : 'hidden'}
-					events={events}
-					setActiveTab={setActiveTab}
-					setCurrentEvent={setCurrentEvent}
-				/>
-				<Attendees className={activeTab === 'attendees' ? 'block' : 'hidden'} attendees={attendees} />
+				{activeTab === 'attendees' && (
+					<>
+						{currentEvent && currentEvent.attendeesAmount > 2 ? (
+							<Search placeholder='Buscar participante...' search={search} setSearch={setSearch} />
+						) : (
+							<div className='w-[280px] h-[34px] bg-neutral-600 animate-pulse rounded-lg mb-4' />
+						)}
+					</>
+				)}
+
+				{events ? (
+					<Events
+						className={activeTab === 'events' ? 'block' : 'hidden'}
+						events={events}
+						setActiveTab={setActiveTab}
+						setCurrentEvent={setCurrentEvent}
+					/>
+				) : (
+					<SkeletonTableList />
+				)}
+
+				{attendees ? (
+					<Attendees className={activeTab === 'attendees' ? 'block' : 'hidden'} attendees={attendees} />
+				) : (
+					<SkeletonTableList />
+				)}
 			</div>
 		</PageContext.Provider>
 	)
