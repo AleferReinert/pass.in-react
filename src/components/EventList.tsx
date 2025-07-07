@@ -61,8 +61,8 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
                                             Desabilitado por não ter ações.
                                             Não foi usado disable para não interferir nos estilos.
                                         */}
-										<Button bgTransparent className='pointer-events-none'>
-											<ThreeDotsIcon />
+										<Button bgTransparent className='pointer-events-none' title='Ações'>
+											<ThreeDotsIcon aria-hidden />
 										</Button>
 									</td>
 								</tr>
@@ -74,3 +74,4 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
 		</div>
 	)
 }
+
