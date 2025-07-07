@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { createContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AttendeeProps, Attendees } from './components/AttendeeList'
+import { PageContext } from './components/contexts/PageContext'
 import { EventProps, Events } from './components/EventList'
 import { Header } from './components/Header'
 import Loading from './components/Loading'
@@ -11,14 +12,6 @@ import { Search } from './components/Search'
 import { useUrl } from './hooks/useUrl'
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
-
-export type PageContextProps = {
-	page: number
-	setPage: React.Dispatch<React.SetStateAction<number>>
-	itemsPerPage: number
-}
-
-export const PageContext = createContext<PageContextProps>({ page: 1, setPage: () => {}, itemsPerPage: 10 })
 
 export function App() {
 	const { hasUrlParam, getUrlParamValue, updateUrlParams } = useUrl()
@@ -79,6 +72,7 @@ export function App() {
 					})
 				})
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentEvent, search])
 
 	if (!events) {
