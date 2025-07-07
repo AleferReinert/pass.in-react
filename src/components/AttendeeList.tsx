@@ -88,8 +88,8 @@ export function Attendees({ attendees, ...props }: AttendeesProps) {
                                         Desabilitado por não ter ações.
                                         Não foi usado disable para não interferir nos estilos.
                                     */}
-									<Button bgTransparent className='pointer-events-none'>
-										<ThreeDotsIcon />
+									<Button bgTransparent className='pointer-events-none' title='Ações'>
+										<ThreeDotsIcon aria-hidden />
 									</Button>
 								</td>
 							</tr>
