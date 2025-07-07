@@ -30,7 +30,7 @@ export function Header({ activeTab, setActiveTab, setSearch }: HeaderProps) {
 
 	return (
 		<header className='flex items-center gap-5 pt-4 pb-7 sm:pt-7 text-zinc-400'>
-			<img src={NlwUniteIcon} alt='pass.in' />
+			<img src={NlwUniteIcon} alt='pass.in' width='32' height='32' />
 
 			<nav className={'flex gap-5 font-medium text-sm ' + active}>
 				<button className='focus-visible:outline-none' onClick={changeToEvents}>
