@@ -70,7 +70,7 @@ export function Attendees({ attendees, ...props }: AttendeesProps) {
 						return (
 							<tr key={item.id}>
 								<td>
-									<Checkbox name='item' />
+									<Checkbox aria-label={`Selecionar participante ${item.name}`} name='item' />
 								</td>
 								<td>{item.id}</td>
 								<td>
@@ -100,3 +100,4 @@ export function Attendees({ attendees, ...props }: AttendeesProps) {
 		</div>
 	)
 }
+

@@ -45,7 +45,7 @@ export function Events({ events, setActiveTab, setCurrentEvent, ...props }: Even
 							return (
 								<tr key={item.id} className='sm:hover:text-orange-400'>
 									<td>
-										<Checkbox name='item' value={item.id} />
+										<Checkbox aria-label={`Selecionar evento ${item.title}`} name='item' value={item.id} />
 									</td>
 									<td onClick={() => goToAttendees(item)} className='hover:cursor-pointer'>
 										{item.title}
