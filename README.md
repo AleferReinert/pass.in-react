@@ -4,6 +4,7 @@ Aplicação web para gerenciamento de participantes em eventos presenciais.
 
 Desenvolvido durante o NLW da [Rocketseat](https://github.com/Rocketseat).
 
+- [Layout](https://www.figma.com/design/mHC6yBILFbaolx8uuZjpUP/pass.in--Community-?node-id=2007-1477&p=f&t=ivLxQxi2fawHS7yL-0)
 - [Material complementar](https://efficient-sloth-d85.notion.site/React-529e4443080a4d889f7a0714aa09348c)
 
 ## Começando
@@ -26,7 +27,8 @@ Desenvolvido durante o NLW da [Rocketseat](https://github.com/Rocketseat).
    yarn install
    ```
 
-4. Inicie o servidor de desenvolvimento:
+4. Defina as variáveis de ambiente como em `.env.example`.
+5. Inicie o servidor de desenvolvimento:
 
    ```sh
    yarn dev
