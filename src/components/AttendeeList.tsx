@@ -41,7 +41,7 @@ export function Attendees({ attendees, ...props }: AttendeesProps) {
 		return (
 			<>
 				<XIcon className='text-red-400 inline-block' />
-				<span className='hidden lg:inline text-zinc-500'>Não fez check-in</span>
+				<span className='hidden lg:inline text-zinc-400'>Não fez check-in</span>
 			</>
 		)
 	}
